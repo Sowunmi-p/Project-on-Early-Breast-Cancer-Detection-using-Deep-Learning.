@@ -1,4 +1,5 @@
 # Project-on-Using Deep Learning for Early Breast Cancer Detection
+The project uses the CBIS-DDSM dataset to develop deep learning models for early breast cancer detection. The project uses high-resolution mammography images and comprehensive annotations to improve diagnostic accuracy. Traditional methods rely on radiologists' expertise, leading to variability in diagnostic accuracy. The Curated Breast Imaging Subset of DDSM (CBIS-DDSM) offers a standardized dataset, enhancing early cancer detection, making diagnostic processes more reliable and accessible. This standardized dataset promotes reproducibility and innovation in medical imaging.
 
 # Descripton
 This dataset is jpeg format of the original dataset(163GB). The resolution was kept to the original dataset.
