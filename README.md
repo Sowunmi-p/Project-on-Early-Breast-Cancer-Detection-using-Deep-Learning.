@@ -1,6 +1,6 @@
 # Project-on-Using Deep Learning for Early Breast Cancer Detection
 
-Descripton
+# Descripton
 This dataset is jpeg format of the original dataset(163GB). The resolution was kept to the original dataset.
 
 Number of Studies: 6775
