@@ -1,24 +1,81 @@
-# Project-on-Using Deep Learning for Early Breast Cancer Detection
-The project uses the CBIS-DDSM dataset to develop deep learning models for early breast cancer detection. The project uses high-resolution mammography images and comprehensive annotations to improve diagnostic accuracy. Traditional methods rely on radiologists' expertise, leading to variability in diagnostic accuracy. The Curated Breast Imaging Subset of DDSM (CBIS-DDSM) offers a standardized dataset, enhancing early cancer detection, making diagnostic processes more reliable and accessible. This standardized dataset promotes reproducibility and innovation in medical imaging.
 
-# Descripton
-This dataset is jpeg format of the original dataset(163GB). The resolution was kept to the original dataset.
 
-Number of Studies: 6775
-Number of Series: 6775
-Number of Participants: 1,566(NB)
-Number of Images: 10239
-Modalities: MG
-Image Size (GB): 6(.jpg)
-NB: The image data for this collection is structured such that each participant has multiple patient IDs. For example, pat_id 00038 has 10 separate patient IDs which provide information about the scans within the IDs (e.g. Calc-Test_P_00038_LEFT_CC, Calc-Test_P_00038_RIGHT_CC_1) This makes it appear as though there are 6,671 participants according to the DICOM metadata, but there are only 1,566 actual participants in the cohort.
+The primary purpose of this code is to preprocess and analyze breast cancer cbis-ddsm and histopathology images, train various deep learning models (CNN, EfficientNetB0, VGG16, MobileNet), evaluate their performance, and compare their effectiveness in classifying breast cancer images into benign and malignant categories. The ultimate goal is to identify the most effective model for breast cancer detection using histopathological images.
 
-Summary
-This CBIS-DDSM (Curated Breast Imaging Subset of DDSM) is an updated and standardized version of the Digital Database for Screening Mammography (DDSM). The DDSM is a database of 2,620 scanned film mammography studies. It contains normal, benign, and malignant cases with verified pathology information. The scale of the database along with ground truth validation makes the DDSM a useful tool in the development and testing of decision support systems. The CBIS-DDSM collection includes a subset of the DDDSM data selected and curated by a trained mammographer. The images have been decompressed and converted to DICOM format. Updated ROI segmentation and bounding boxes, and pathologic diagnosis for training data are also included. A manuscript describing how to use this dataset in detail is available at https://www.nature.com/articles/sdata2017177.
+### Format of Inputs and Outputs
 
-Published research results from work in developing decision support systems in mammography are difficult to replicate due to the lack of a standard evaluation data set; most computer-aided diagnosis (CADx) and detection (CADe) algorithms for breast cancer in mammography are evaluated on private data sets or on unspecified subsets of public databases. Few well-curated public datasets have been provided for the mammography community. These include the DDSM, the Mammographic Imaging Analysis Society (MIAS) database, and the Image Retrieval in Medical Applications (IRMA) project. Although these public data sets are useful, they are limited in terms of data set size and accessibility.
+#### Inputs:
+1. **Image Files**: The input consists of breast cancer cbis-ddsm and histopathology images, categorized into benign and malignant classes.
+2. **CSV Files**: CSV files containing image paths and corresponding labels.
+3. **Hyperparameters**: Parameters for model training such as learning rate, batch size, number of epochs, etc.
 
-For example, most researchers using the DDSM do not leverage all its images for a variety of historical reasons. When the database was released in 1997, computational resources to process hundreds or thousands of images were not widely available. Additionally, the DDSM images are saved in non-standard compression files that require the use of decompression code that has not been updated or maintained for modern computers. Finally, the ROI annotations for the abnormalities in the DDSM were provided to indicate a general position of lesions, but not a precise segmentation for them. Therefore, many researchers must implement segmentation algorithms for accurate feature extraction. This causes an inability to directly compare the performance of methods or to replicate prior results. The CBIS-DDSM collection addresses that challenge by publicly releasing a curated and standardized version of the DDSM for evaluation of future CADx and CADe systems (sometimes referred to generally as CAD) research in mammography.
+#### Outputs:
+1. **Trained Models**: Saved models after training.
+2. **Evaluation Metrics**: Accuracy, loss, precision, recall, F1 score, and ROC-AUC score.
+3. **Confusion Matrices**: Visual representation of the model's performance on test data.
+4. **Graphs**: Plots showing training and validation accuracy/loss over epochs.
 
-Please note that the image data for this collection is structured such that each participant has multiple patient IDs. For example, participant 00038 has 10 separate patient IDs which provide information about the scans within the IDs (e.g. Calc-Test_P_00038_LEFT_CC, Calc-Test_P_00038_RIGHT_CC_1). This makes it appear as though there are 6,671 patients according to the DICOM metadata, but there are only 1,566 actual participants in the cohort.
+### Description of Parameters in Defined Functions
 
-For scientific inquiries about this dataset, please contact Dr. Daniel Rubin, Department of Biomedical Data Science, Radiology, and Medicine, Stanford University School of Medicine (dlrubin@stanford.edu).
+1. **load_data(file_path)**
+   - **Purpose**: Loads image file paths and labels from a CSV file.
+   - **Parameters**:
+     - `file_path` (str): The path to the CSV file containing image paths and labels.
+   - **Returns**: A DataFrame with image paths and corresponding labels.
+
+2. **preprocess_images(image_paths, labels, img_size=(50, 50))**
+   - **Purpose**: Reads and resizes images, converts them to numpy arrays, and normalizes the pixel values.
+   - **Parameters**:
+     - `image_paths` (list): List of image file paths.
+     - `labels` (list): List of labels corresponding to the images.
+     - `img_size` (tuple): Desired image size after resizing. Default is (50, 50).
+   - **Returns**: Numpy arrays of processed images and their corresponding labels.
+
+3. **train_model(model, X_train, y_train, X_val, y_val, batch_size=32, epochs=50, learning_rate=0.001)**
+   - **Purpose**: Trains the specified model on the training data and evaluates it on the validation data.
+   - **Parameters**:
+     - `model` (Keras Model): The deep learning model to be trained.
+     - `X_train` (numpy array): Training images.
+     - `y_train` (numpy array): Training labels.
+     - `X_val` (numpy array): Validation images.
+     - `y_val` (numpy array): Validation labels.
+     - `batch_size` (int): Number of samples per gradient update. Default is 32.
+     - `epochs` (int): Number of epochs to train the model. Default is 50.
+     - `learning_rate` (float): Learning rate for the optimizer. Default is 0.001.
+   - **Returns**: Trained model and history object containing training and validation metrics.
+
+4. **evaluate_model(model, X_test, y_test)**
+   - **Purpose**: Evaluates the trained model on the test data and calculates various performance metrics.
+   - **Parameters**:
+     - `model` (Keras Model): The trained model to be evaluated.
+     - `X_test` (numpy array): Test images.
+     - `y_test` (numpy array): Test labels.
+   - **Returns**: Dictionary containing accuracy, loss, precision, recall, F1 score, confusion matrix, and ROC-AUC score.
+
+5. **plot_training_history(history)**
+   - **Purpose**: Plots the training and validation accuracy and loss over epochs.
+   - **Parameters**:
+     - `history` (History object): History object returned by the `fit` method of the model.
+   - **Returns**: None (displays the plot).
+
+6. **plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues)**
+   - **Purpose**: Plots the confusion matrix.
+   - **Parameters**:
+     - `cm` (array): Confusion matrix to be plotted.
+     - `classes` (list): List of class names.
+     - `normalize` (bool): Whether to normalize the values. Default is False.
+     - `title` (str): Title of the plot. Default is 'Confusion matrix'.
+     - `cmap` (Colormap): Colormap to be used. Default is `plt.cm.Blues`.
+   - **Returns**: None (displays the plot).
+
+7. **plot_roc_curve(fpr, tpr, roc_auc)**
+   - **Purpose**: Plots the ROC curve.
+   - **Parameters**:
+     - `fpr` (array): False Positive Rate.
+     - `tpr` (array): True Positive Rate.
+     - `roc_auc` (float): Area Under the ROC Curve (AUC).
+   - **Returns**: None (displays the plot).
+
+### Conclusion
+
+This code effectively processes cbis-ddsm and histopathological images, trains and evaluates various deep learning models, and provides comprehensive performance metrics and visualizations to assess the effectiveness of each model in breast cancer detection. The functions are modular and can be easily adapted for different datasets and models, facilitating further research and improvements in this critical field.
